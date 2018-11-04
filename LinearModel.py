@@ -5,7 +5,7 @@ import os  # reading the input files we have access to
 
 
 # train_df = pd.read_csv('input/train.csv', nrows=10_000_000)
-train_df = pd.read_csv('input/train.csv', nrows=5_000_000, usecols=['fare_amount', 'pickup_longitude', 'pickup_latitude', 'dropoff_longitude', 'dropoff_latitude'], dtype={'fare_amount': float, 'pickup_longitude': float, 'pickup_latitude': float, 'dropoff_longitude': float, 'dropoff_latitude': float})
+train_df = pd.read_csv('input/train.csv', nrows=10_000_000, usecols=['fare_amount', 'pickup_longitude', 'pickup_latitude', 'dropoff_longitude', 'dropoff_latitude'], dtype={'fare_amount': float, 'pickup_longitude': float, 'pickup_latitude': float, 'dropoff_longitude': float, 'dropoff_latitude': float})
 
 # train_df.dtypes:
 # key                   object
