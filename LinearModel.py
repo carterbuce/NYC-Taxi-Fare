@@ -5,7 +5,7 @@ import os  # reading the input files we have access to
 
 
 # train_df = pd.read_csv('input/train.csv', nrows=10_000_000)
-train_df = pd.read_csv('input/train.csv', nrows=10_000_000, usecols=['fare_amount', 'pickup_longitude', 'pickup_latitude', 'dropoff_longitude', 'dropoff_latitude'], dtype={'fare_amount': float, 'pickup_longitude': float, 'pickup_latitude': float, 'dropoff_longitude': float, 'dropoff_latitude': float})
+train_df = pd.read_csv('input/train.csv', usecols=['fare_amount', 'pickup_longitude', 'pickup_latitude', 'dropoff_longitude', 'dropoff_latitude'], dtype={'fare_amount': float, 'pickup_longitude': float, 'pickup_latitude': float, 'dropoff_longitude': float, 'dropoff_latitude': float})
 
 # train_df.dtypes:
 # key                   object
@@ -19,28 +19,50 @@ train_df = pd.read_csv('input/train.csv', nrows=10_000_000, usecols=['fare_amoun
 # dtype: object
 
 
-# remove data with NaN values
-print('Old size: %d' % len(train_df))
-train_df = train_df.dropna(how = 'any', axis = 'rows')
-print('New size: %d' % len(train_df))
-
 # Given a dataframe, add two new features 'abs_diff_longitude' and
 # 'abs_diff_latitude' reprensenting the "Manhattan vector" from
 # the pickup location to the dropoff location.
 def add_travel_vector_features(df):
     df['abs_diff_longitude'] = (df.dropoff_longitude - df.pickup_longitude).abs()
     df['abs_diff_latitude'] = (df.dropoff_latitude - df.pickup_latitude).abs()
+    df['abs_diff_distance'] = np.sqrt(np.power(df.abs_diff_longitude, 2) + np.power(df.abs_diff_latitude, 2))
 
 add_travel_vector_features(train_df)
 
-# exclude data with large differences in latitude/longitude
-plot = train_df.iloc[:2000].plot.scatter('abs_diff_longitude', 'abs_diff_latitude')
-# plot.figure.show()  # show the plot
+
+# remove data with NaN values
+print('Original size: %d' % len(train_df))
+train_df = train_df.dropna(how = 'any', axis = 'rows')
+print('New size after removing NaN location values: %d' % len(train_df))
+
+# remove data with negative and large fares
+train_df = train_df[(train_df.fare_amount > 0) & (train_df.fare_amount < 500)]
+print('New size after removing negative and outlier fares: %d' % len(train_df))
+
+train_df = train_df[(train_df.dropoff_longitude < -72.0) & (train_df.dropoff_longitude > -75.0)]
+train_df = train_df[(train_df.dropoff_latitude < 42.0) & (train_df.dropoff_latitude > 40.0)]
+train_df = train_df[(train_df.pickup_longitude < -72.0) & (train_df.pickup_longitude > -75.0)]
+train_df = train_df[(train_df.pickup_latitude < 42.0) & (train_df.pickup_latitude > 40.0)]
+train_df = train_df[(train_df.abs_diff_distance > 0)]
+print('New size after restricting pickup/dropoff lat/long: %d' % len(train_df))
+
+# train_df = train_df[(train_df.abs_diff_longitude < 3.0) & (train_df.abs_diff_latitude < 3.0)]
+# train_df = train_df[(train_df.abs_diff_distance < 3.0)]
+# print('New size after removing abs diff distance >3.0 degrees: %d' % len(train_df))
 
 
-print('Old size: %d' % len(train_df))
-train_df = train_df[(train_df.abs_diff_longitude < 5.0) & (train_df.abs_diff_latitude < 5.0)]
-print('New size: %d' % len(train_df))
+# plot = train_df.plot.scatter('abs_diff_distance', 'fare_amount')
+# plot.figure.show()
+#
+# plot = train_df.plot.scatter('abs_diff_longitude', 'abs_diff_latitude')
+# plot.figure.show()
+#
+# plot = train_df.plot.scatter('dropoff_longitude', 'dropoff_latitude')
+# plot.figure.show()
+#
+# plot = train_df.plot.scatter('pickup_longitude', 'pickup_latitude')
+# plot.figure.show()
+
 
 # Construct and return an Nx3 input matrix for our linear model
 # using the travel vector, plus a 1.0 for a constant bias term.
