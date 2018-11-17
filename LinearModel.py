@@ -5,7 +5,8 @@ import os  # reading the input files we have access to
 
 
 # train_df = pd.read_csv('input/train.csv', nrows=10_000_000)
-train_df = pd.read_csv('input/train.csv', usecols=['fare_amount', 'pickup_longitude', 'pickup_latitude', 'dropoff_longitude', 'dropoff_latitude'], dtype={'fare_amount': float, 'pickup_longitude': float, 'pickup_latitude': float, 'dropoff_longitude': float, 'dropoff_latitude': float})
+train_df = pd.read_csv('input/train.csv', usecols=['fare_amount', 'pickup_longitude', 'pickup_latitude', 'dropoff_longitude', 'dropoff_latitude', 'passenger_count'],
+                       dtype={'fare_amount': float, 'pickup_longitude': float, 'pickup_latitude': float, 'dropoff_longitude': float, 'dropoff_latitude': float, 'passenger_count': int})
 
 # train_df.dtypes:
 # key                   object
@@ -39,12 +40,18 @@ print('New size after removing NaN location values: %d' % len(train_df))
 train_df = train_df[(train_df.fare_amount > 0) & (train_df.fare_amount < 500)]
 print('New size after removing negative and outlier fares: %d' % len(train_df))
 
+# remove data with locations outside of NYC
 train_df = train_df[(train_df.dropoff_longitude < -72.0) & (train_df.dropoff_longitude > -75.0)]
 train_df = train_df[(train_df.dropoff_latitude < 42.0) & (train_df.dropoff_latitude > 40.0)]
 train_df = train_df[(train_df.pickup_longitude < -72.0) & (train_df.pickup_longitude > -75.0)]
 train_df = train_df[(train_df.pickup_latitude < 42.0) & (train_df.pickup_latitude > 40.0)]
 train_df = train_df[(train_df.abs_diff_distance > 0)]
 print('New size after restricting pickup/dropoff lat/long: %d' % len(train_df))
+
+# remove data with more than 4 passengers
+train_df = train_df[(train_df.passenger_count < 5)]
+print('New size after removing passenger counts > 4: %d' % len(train_df))
+
 
 # train_df = train_df[(train_df.abs_diff_longitude < 3.0) & (train_df.abs_diff_latitude < 3.0)]
 # train_df = train_df[(train_df.abs_diff_distance < 3.0)]
