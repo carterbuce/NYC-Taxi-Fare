@@ -17,12 +17,16 @@ LEARNING_RATE = 0.001
 train_df = pd.read_csv('input/train_clean.csv')
 test_df = pd.read_csv('input/test.csv')
 
+
+# add more features
+add_travel_vector_features(test_df) # travel vector features already in train_clean
+
+
+
 dropped_columns = ['pickup_longitude', 'pickup_latitude',
                    'dropoff_longitude', 'dropoff_latitude',
                    'passenger_count', 'pickup_datetime']
 train_clean = train_df.drop(dropped_columns, axis=1)
-
-add_travel_vector_features(test_df)
 test_clean = test_df.drop(dropped_columns + ['key'], axis=1)
 
 
