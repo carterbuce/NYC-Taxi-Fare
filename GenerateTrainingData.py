@@ -41,7 +41,7 @@ train_df = train_df.dropna(how = 'any', axis = 'rows')
 print('New size after removing NaN location values: %d' % len(train_df))
 
 # remove data with negative and large fares
-train_df = train_df[(train_df.fare_amount > 0) & (train_df.fare_amount < 500)]
+train_df = train_df[(train_df.fare_amount > 0) & (train_df.fare_amount < 250)]
 print('New size after removing negative and outlier fares: %d' % len(train_df))
 
 # remove data with locations outside of NYC
