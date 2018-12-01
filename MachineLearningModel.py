@@ -7,28 +7,32 @@ from sklearn.model_selection import train_test_split
 from tensorflow.python.keras import Sequential, optimizers, regularizers, backend
 from sklearn import preprocessing
 from tensorflow.python.keras.layers import BatchNormalization, Dense
-from Util import save_submission, add_travel_vector_features
+from Util import *
 
 # Model parameters
-BATCH_SIZE = 250 # how large of batches to run through, larger leads to generalization, smaller leads to overfitting
+BATCH_SIZE = 250  # larger leads to generalization, smaller leads to overfit model
 EPOCHS = 15  # how many times to run all the data through the model
 LEARNING_RATE = 0.001
 
 train_df = pd.read_csv('input/train_clean.csv')
 test_df = pd.read_csv('input/test.csv')
 
-train_df = train_df.iloc[:1_000_000] #take 500k rows randomly for faster testing TODO remove
+train_df = train_df.iloc[:1_000_000] #take first 1m rows for faster testing TODO remove
 
 # add more features
-add_travel_vector_features(test_df)  # note: travel vector features are already in train_df
+add_trip_dist(test_df)
+add_trip_dist(train_df)
+add_dist_airports(test_df)
+add_dist_airports(train_df)
+add_dist_manhattan(test_df)
+add_dist_manhattan(train_df)
 
-features = ['abs_diff_distance']
-
-dropped_columns = ['pickup_longitude', 'pickup_latitude',
-                   'dropoff_longitude', 'dropoff_latitude',
-                   'passenger_count', 'pickup_datetime']
-# train_clean = train_df.drop(dropped_columns, axis=1)
-# test_clean = test_df.drop(dropped_columns + ['key'], axis=1)
+features = ['abs_diff_distance',
+            'dist_pickup_jfk', 'dist_dropoff_jfk',
+            'dist_pickup_lga', 'dist_dropoff_lga',
+            'dist_pickup_ewr', 'dist_dropoff_ewr',
+            'dist_pickup_manhattan', 'dist_dropoff_manhattan'
+            ]
 
 train_features = train_df[features]
 test_features = test_df[features]

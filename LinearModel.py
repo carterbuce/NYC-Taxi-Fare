@@ -34,7 +34,7 @@ test_df = pd.read_csv('input/test.csv')
 # dtype: object
 
 # Reuse the above helper functions to add our features and generate the input matrix.
-add_travel_vector_features(test_df)
+add_trip_dist(test_df)
 test_X = get_input_matrix(test_df)
 # Predict fare_amount on the test set using our model (w) trained on the training set.
 test_y_predictions = np.matmul(test_X, w).round(decimals = 2)
@@ -43,6 +43,6 @@ test_y_predictions = np.matmul(test_X, w).round(decimals = 2)
 submission = pd.DataFrame(
     {'key': test_df.key, 'fare_amount': test_y_predictions},
     columns = ['key', 'fare_amount'])
-submission.to_csv('submission.csv', index = False)
+submission.to_csv('submission.csv', index=False)
 
 

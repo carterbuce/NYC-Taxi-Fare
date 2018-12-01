@@ -31,9 +31,13 @@ train_df = pd.read_csv('input/train.csv', usecols=columns, dtype=column_types)
 # passenger_count        int64
 # dtype: object
 
+# add additional values for later calculations
+train_df['abs_diff_longitude'] = (train_df.dropoff_longitude - train_df.pickup_longitude).abs()
+train_df['abs_diff_latitude'] = (train_df.dropoff_latitude - train_df.pickup_latitude).abs()
+train_df['abs_diff_distance'] = train_df.abs_diff_latitude + train_df.abs_diff_longitude
 
 
-add_travel_vector_features(train_df)
+
 
 # remove data with NaN values
 print('Original size: %d' % len(train_df))
@@ -56,4 +60,26 @@ print('New size after restricting pickup/dropoff lat/long: %d' % len(train_df))
 train_df = train_df[(train_df.passenger_count < 5)]
 print('New size after removing passenger counts > 4: %d' % len(train_df))
 
+# import matplotlib.pyplot as plt
+# fig, ax = plt.subplots()
+#
+# train_df.plot(kind='scatter', x='pickup_longitude', y='pickup_latitude',
+#                 color='blue',
+#                 # xlim=(40.63, 40.85), ylim=(-74.03, -73.75),
+#                 ax=ax,
+#                 s=.005, alpha=.35)
+#
+# plt.plot(-73.7781, 40.6413, color="red", markersize=4, marker='x')
+# plt.plot(-73.8740, 40.7769, color="red", markersize=4, marker='x')
+# plt.plot(-74.1745, 40.6895, color="red", markersize=4, marker='x')
+# plt.plot(-73.9712, 40.7831, color="red", markersize=4, marker='x')
+#
+# plt.show()
+
+# remove the extra values
+train_df.drop('abs_diff_longitude', axis=1)
+train_df.drop('abs_diff_latitude', axis=1)
+train_df.drop('abs_diff_distance', axis=1)
+
+# write to csv the cleaned data
 train_df.to_csv('input/train_clean.csv', index=False)
