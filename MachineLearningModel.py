@@ -9,15 +9,14 @@ from sklearn import preprocessing
 from tensorflow.python.keras.layers import BatchNormalization, Dense
 from Util import *
 
-# Model parameters
-BATCH_SIZE = 250  # larger leads to generalization, smaller leads to overfit model
-EPOCHS = 15  # how many times to run all the data through the model
+# Model hyperparameters
+BATCH_SIZE = 350  # larger leads to generalization, smaller leads to overfit model
+EPOCHS = 12  # how many times to run all the data through the model
 LEARNING_RATE = 0.001
 
 train_df = pd.read_csv('input/train_clean.csv')
 test_df = pd.read_csv('input/test.csv')
 
-train_df = train_df.iloc[:1_000_000] #take first 1m rows for faster testing TODO remove
 
 # add more features
 add_trip_dist(test_df)
