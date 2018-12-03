@@ -1,1 +1,3 @@
-download the "train.csv" file from the kaggle page and copy it into the "input" directory
+- download the "train.csv" file from https://www.kaggle.com/c/new-york-city-taxi-fare-prediction/download/train.csv and copy it into the "input" directory
+- run CleanTrainingData to clean the train.csv data
+- run either LinearModel or MachineLearningModel
